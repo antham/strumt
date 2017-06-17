@@ -1,0 +1,17 @@
+language: go
+
+go:
+  - 1.8
+
+before_install:
+  - go get -u github.com/golang/dep/cmd/dep
+  - go get -u gopkg.in/alecthomas/gometalinter.v1
+  - mv $GOPATH/bin/gometalinter.v1 $GOPATH/bin/gometalinter
+  - gometalinter --install --update
+
+install: dep ensure -v
+
+script: make test-all
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
