@@ -19,5 +19,5 @@ run-quick-tests: setup-test-fixtures
 test-all: gometalinter run-tests gommit doc-hunt
 
 test-package:
-	go test -race -cover -coverprofile=/tmp/strumpt github.com/antham/strumpt/$(pkg)
-	go tool cover -html=/tmp/strumpt -o /tmp/strumpt.html
+	go test -race -cover -coverprofile=/tmp/strumt github.com/antham/strumt/$(pkg)
+	go tool cover -html=/tmp/strumt -o /tmp/strumt.html

@@ -1,2 +1,2 @@
-Strumpt [![Build Status](https://travis-ci.org/antham/strumpt.svg?branch=master)](https://travis-ci.org/antham/strumpt)
+Strumt [![Build Status](https://travis-ci.org/antham/strumt.svg?branch=master)](https://travis-ci.org/antham/strumt)
 =======
