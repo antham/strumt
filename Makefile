@@ -10,13 +10,13 @@ fmt:
 gometalinter:
 	gometalinter -D gotype -D aligncheck --vendor --deadline=600s --dupl-threshold=200 -e '_string' -j 5 ./...
 
-run-tests: setup-test-fixtures
+run-tests:
 	./test.sh
 
-run-quick-tests: setup-test-fixtures
+run-quick-tests:
 	go test -v $(PKGS)
 
-test-all: gometalinter run-tests gommit doc-hunt
+test-all: gometalinter run-tests
 
 test-package:
 	go test -race -cover -coverprofile=/tmp/strumt github.com/antham/strumt/$(pkg)
