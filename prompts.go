@@ -4,6 +4,7 @@ package strumt
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -11,13 +12,13 @@ import (
 
 // NewPrompts creates a new prompt from stdin
 func NewPrompts() Prompts {
-	return Prompts{reader: bufio.NewReader(os.Stdin), prompts: map[string]Prompter{}}
+	return Prompts{reader: bufio.NewReader(os.Stdin), writer: os.Stdout, prompts: map[string]Prompter{}}
 }
 
-// NewPromptsFromReader creates a new prompt from a given reader, useful for testing purpose
-// for instance by providing a buffer
-func NewPromptsFromReader(reader io.Reader) Prompts {
-	return Prompts{reader: bufio.NewReader(reader), prompts: map[string]Prompter{}}
+// NewPromptsFromReader creates a new prompt from a given reader and writer
+// , useful for testing purpose for instance by providing a buffer
+func NewPromptsFromReader(reader io.Reader, writer io.Writer) Prompts {
+	return Prompts{reader: bufio.NewReader(reader), writer: writer, prompts: map[string]Prompter{}}
 }
 
 // Prompts stores all defined prompts and current
@@ -26,6 +27,20 @@ type Prompts struct {
 	currentPrompt Prompter
 	prompts       map[string]Prompter
 	reader        *bufio.Reader
+	writer        io.Writer
+}
+
+func (p *Prompts) renderPrompt(prompt Prompter) {
+	switch pr := prompt.(type) {
+	default:
+		fmt.Fprintf(p.writer, "%s : \n", prompt.GetPromptString())
+	}
+}
+func (p *Prompts) renderError(prompt Prompter, err error) {
+	switch pr := prompt.(type) {
+	default:
+		fmt.Fprintf(p.writer, "%s\n", err.Error())
+	}
 }
 
 func (p *Prompts) isMultilineEnd() (bool, error) {
@@ -46,7 +61,7 @@ func (p *Prompts) isMultilineEnd() (bool, error) {
 	return false, nil
 }
 
-func (p *Prompts) parseMultipleLine(prompt MultilinePrompter) {
+func (p *Prompts) parseMultipleLine(prompt MultilinePrompter) ([]string, error) {
 	inputs := []string{}
 
 	for {
@@ -56,7 +71,7 @@ func (p *Prompts) parseMultipleLine(prompt MultilinePrompter) {
 		if err != nil {
 			p.currentPrompt = p.prompts[prompt.GetNextOnError(err)]
 
-			return
+			return []string{}, err
 		}
 
 		inputs = append(inputs, input)
@@ -65,7 +80,8 @@ func (p *Prompts) parseMultipleLine(prompt MultilinePrompter) {
 
 		if err != nil {
 			p.currentPrompt = p.prompts[prompt.GetNextOnError(err)]
-			return
+
+			return []string{}, err
 		}
 
 		if end {
@@ -75,34 +91,46 @@ func (p *Prompts) parseMultipleLine(prompt MultilinePrompter) {
 
 	if err := prompt.Parse(inputs); err != nil {
 		p.currentPrompt = p.prompts[prompt.GetNextOnError(err)]
-		return
+
+		return inputs, err
 	}
 
 	if prompt.GetNextOnSuccess(inputs) == "" {
 		p.currentPrompt = nil
-		return
+
+		return inputs, nil
 	}
 
 	p.currentPrompt = p.prompts[prompt.GetNextOnSuccess(inputs)]
+
+	return inputs, nil
 }
 
-func (p *Prompts) parseLine(prompt LinePrompter) {
+func (p *Prompts) parseLine(prompt LinePrompter) (string, error) {
 	input, err := p.reader.ReadString('\n')
 	input = strings.TrimRight(input, "\n")
 
-	perr := prompt.Parse(input)
-
-	if err != nil || perr != nil {
+	if err != nil {
 		p.currentPrompt = p.prompts[prompt.GetNextOnError(err)]
-		return
+
+		return "", err
+	}
+
+	if err := prompt.Parse(input); err != nil {
+		p.currentPrompt = p.prompts[prompt.GetNextOnError(err)]
+
+		return input, err
 	}
 
 	if prompt.GetNextOnSuccess(input) == "" {
 		p.currentPrompt = nil
-		return
+
+		return input, nil
 	}
 
 	p.currentPrompt = p.prompts[prompt.GetNextOnSuccess(input)]
+
+	return input, nil
 }
 
 // AddLinePrompter add a new LinePrompter mapped to a given id
@@ -123,13 +151,20 @@ func (p *Prompts) SetFirst(id string) {
 // Run executes prompt sequence
 func (p *Prompts) Run() {
 	for {
+		var err error
+
 		prompt := p.currentPrompt
+		p.renderPrompt(prompt)
 
 		switch lp := prompt.(type) {
 		case LinePrompter:
-			p.parseLine(lp)
+			_, err = p.parseLine(lp)
 		case MultilinePrompter:
-			p.parseMultipleLine(lp)
+			_, err = p.parseMultipleLine(lp)
+		}
+
+		if err != nil {
+			p.renderError(prompt, err)
 		}
 
 		if p.currentPrompt == nil {

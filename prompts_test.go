@@ -3,6 +3,8 @@ package strumt
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net"
 	"strconv"
 	"strings"
@@ -34,7 +36,7 @@ func (s *StringPrompt) GetPromptString() string {
 
 func (s *StringPrompt) Parse(value string) error {
 	if value == "" {
-		return fmt.Errorf("Empty value give")
+		return fmt.Errorf("Empty value given")
 	}
 
 	*(s.valuePtr) = value
@@ -64,7 +66,7 @@ func (s *IntPrompt) Parse(value string) error {
 	v, err := strconv.Atoi(value)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Provide a numerical value")
 	}
 
 	*(s.valuePtr) = v
@@ -164,18 +166,82 @@ func TestPromptsRun(t *testing.T) {
 		"8.9.10.11",
 	}
 
-	buf := []byte("\n\nuser\n\npassword\ntest\n10000\n127.0.0.1\ntest\n1.2.3.4\n8.9.10.11\n\n127.0.0.1\n1.2.3.4\n8.9.10.11\n\nlocalhost:127.0.0.1\ntest\nmyIp:1.2.3.4\n\nlocalhost:127.0.0.1\nmyIp:1.2.3.4\n\n")
+	buf := "\nuser\n\npassword\ntest\n10000\n127.0.0.1\ntest\n1.2.3.4\n8.9.10.11\n\n127.0.0.1\n1.2.3.4\n8.9.10.11\n\nlocalhost:127.0.0.1\ntest\nmyIp:1.2.3.4\n\nlocalhost:127.0.0.1\nmyIp:1.2.3.4\n\n"
 
-	p := NewPromptsFromReader(bytes.NewBuffer(buf))
+	var actualStdout bytes.Buffer
+
+	p := NewPromptsFromReader(bytes.NewBufferString(buf), &actualStdout)
 
 	p.AddLinePrompter("username", &StringPrompt{&actual.Db.Username, "Give a username", "password", "username"})
 	p.AddLinePrompter("password", &StringPrompt{&actual.Db.Password, "Give a password", "port", "password"})
 	p.AddLinePrompter("port", &IntPrompt{&actual.Db.Port, "Give a port", "ips", "port"})
 	p.AddMultilinePrompter("ips", &IpsPrompt{&actual.Ips, "Give some ips", "hosts", "ips"})
-	p.AddMultilinePrompter("hosts", &MapPrompt{&actual.Hosts, "Give some hosts", "", "hosts"})
+	p.AddMultilinePrompter("hosts", &MapPrompt{&actual.Hosts, "Give some host/ip couples", "", "hosts"})
 
 	p.SetFirst("username")
 	p.Run()
 
+	expectedStdout := "Give a username : \nEmpty value given\nGive a username : \n" +
+		"Give a password : \nEmpty value given\nGive a password : \n" +
+		"Give a port : \nProvide a numerical value\nGive a port : \n" +
+		"Give some ips : \ntest is not a valid IP\nGive some ips : \n" +
+		"Give some host/ip couples : \nCheck test is a valid couple key:value\n" +
+		"Give some host/ip couples : \n"
+
 	assert.Equal(t, expected, actual)
+	assert.Equal(t, expectedStdout, actualStdout.String())
+}
+
+type StringWithCustomRendererPrompt struct {
+	valuePtr          *string
+	prompt            string
+	nextPrompt        string
+	nextPromptOnError string
+	writer            io.Writer
+}
+
+func (s *StringWithCustomRendererPrompt) GetPromptString() string {
+	return s.prompt
+}
+
+func (s *StringWithCustomRendererPrompt) Parse(value string) error {
+	if value == "" {
+		return fmt.Errorf("empty value given")
+	}
+
+	*(s.valuePtr) = value
+
+	return nil
+}
+
+func (s *StringWithCustomRendererPrompt) GetNextOnSuccess(value string) string {
+	return s.nextPrompt
+}
+
+func (s *StringWithCustomRendererPrompt) GetNextOnError(err error) string {
+	return s.nextPromptOnError
+}
+
+func (s *StringWithCustomRendererPrompt) PrintPrompt(prompt string) {
+	fmt.Fprintf(s.writer, "==> %s : \n", prompt)
+}
+
+func (s *StringWithCustomRendererPrompt) PrintError(err error) {
+	fmt.Fprintf(s.writer, "==> Something went wrong : %s\n", err.Error())
+}
+
+func TestPromptRunWithCustomRenderer(t *testing.T) {
+	var actualStdout bytes.Buffer
+
+	p := NewPromptsFromReader(bytes.NewBufferString("\ntest\n"), ioutil.Discard)
+
+	var value string
+
+	p.AddLinePrompter("test", &StringWithCustomRendererPrompt{&value, "Give a value", "", "test", &actualStdout})
+
+	p.SetFirst("test")
+	p.Run()
+
+	assert.Equal(t, "test", value)
+	assert.Equal(t, "==> Give a value : \n==> Something went wrong : empty value given\n==> Give a value : \n", actualStdout.String())
 }
