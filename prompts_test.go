@@ -1,11 +1,13 @@
 package strumt
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -144,6 +146,13 @@ func (m *MapPrompt) GetNextOnError(err error) string {
 
 func (m *MapPrompt) GetNextOnSuccess(value []string) string {
 	return m.nextPrompt
+}
+
+func TestNewPrompts(t *testing.T) {
+	p := NewPrompts()
+
+	assert.Equal(t, bufio.NewReader(os.Stdin), p.reader)
+	assert.Equal(t, os.Stdout, p.writer)
 }
 
 func TestPromptsRun(t *testing.T) {
