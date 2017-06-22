@@ -253,4 +253,102 @@ func TestPromptRunWithCustomRenderer(t *testing.T) {
 
 	assert.Equal(t, "test", value)
 	assert.Equal(t, "==> Give a value : \n==> Something went wrong : empty value given\n==> Give a value : \n", actualStdout.String())
+
+}
+
+func TestPromptsGetScenario(t *testing.T) {
+	buf := "\nuser\n\npassword\ntest\n10000\n127.0.0.1\ntest\n1.2.3.4\n8.9.10.11\n\n127.0.0.1\n1.2.3.4\n8.9.10.11\n\nlocalhost:127.0.0.1\ntest\nmyIp:1.2.3.4\n\nlocalhost:127.0.0.1\nmyIp:1.2.3.4\n\n"
+
+	p := NewPromptsFromReader(bytes.NewBufferString(buf), ioutil.Discard)
+
+	p.AddLinePrompter("username", &StringPrompt{new(string), "Give a username", "password", "username"})
+	p.AddLinePrompter("password", &StringPrompt{new(string), "Give a password", "port", "password"})
+	p.AddLinePrompter("port", &IntPrompt{new(int), "Give a port", "ips", "port"})
+	p.AddMultilinePrompter("ips", &IpsPrompt{&[]string{}, "Give some ips", "hosts", "ips"})
+	p.AddMultilinePrompter("hosts", &MapPrompt{&map[string]string{}, "Give some host/ip couples", "", "hosts"})
+
+	p.SetFirst("username")
+	p.Run()
+
+	expectedScenario := []Step{
+		{
+			"Give a username",
+			[]string{""},
+			fmt.Errorf("Empty value given"),
+		},
+		{
+			"Give a username",
+			[]string{"user"},
+			nil,
+		},
+		{
+			"Give a password",
+			[]string{""},
+			fmt.Errorf("Empty value given"),
+		},
+		{
+			"Give a password",
+			[]string{"password"},
+			nil,
+		},
+		{
+			"Give a port",
+			[]string{"test"},
+			fmt.Errorf("Provide a numerical value"),
+		},
+		{
+			"Give a port",
+			[]string{"10000"},
+			nil,
+		},
+		{
+			"Give some ips",
+			[]string{
+				"127.0.0.1",
+				"test",
+				"1.2.3.4",
+				"8.9.10.11",
+			},
+			fmt.Errorf("test is not a valid IP"),
+		},
+		{
+			"Give some ips",
+			[]string{
+				"127.0.0.1",
+				"1.2.3.4",
+				"8.9.10.11",
+			},
+			nil,
+		},
+		{
+			"Give some host/ip couples",
+			[]string{
+				"localhost:127.0.0.1",
+				"test",
+				"myIp:1.2.3.4",
+			},
+			fmt.Errorf("Check test is a valid couple key:value"),
+		},
+		{
+			"Give some host/ip couples",
+			[]string{
+				"localhost:127.0.0.1",
+				"myIp:1.2.3.4",
+			},
+			nil,
+		},
+	}
+
+	actualScenario := p.GetScenario()
+
+	for i, step := range expectedScenario {
+		assert.Equal(t, step.prompt, actualScenario[i].prompt)
+		assert.Equal(t, step.inputs, actualScenario[i].inputs)
+
+		if step.err != nil {
+			assert.EqualError(t, actualScenario[i].err, step.err.Error())
+		} else {
+			assert.NoError(t, actualScenario[i].err)
+		}
+	}
 }

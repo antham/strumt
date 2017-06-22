@@ -10,6 +10,13 @@ import (
 	"strings"
 )
 
+// Step represents a scenario step
+type Step struct {
+	prompt string
+	inputs []string
+	err    error
+}
+
 // NewPrompts creates a new prompt from stdin
 func NewPrompts() Prompts {
 	return Prompts{reader: bufio.NewReader(os.Stdin), writer: os.Stdout, prompts: map[string]Prompter{}}
@@ -28,6 +35,7 @@ type Prompts struct {
 	prompts       map[string]Prompter
 	reader        *bufio.Reader
 	writer        io.Writer
+	scenario      []Step
 }
 
 func (p *Prompts) renderPrompt(prompt Prompter) {
@@ -153,24 +161,45 @@ func (p *Prompts) SetFirst(id string) {
 	p.currentPrompt = p.prompts[id]
 }
 
+// GetScenario retrieves all steps done during
+// prompt
+func (p *Prompts) GetScenario() []Step {
+	return p.scenario
+}
+
 // Run executes prompt sequence
 func (p *Prompts) Run() {
+	p.scenario = []Step{}
+
 	for {
 		var err error
+		inputs := []string{}
 
 		prompt := p.currentPrompt
 		p.renderPrompt(prompt)
 
 		switch lp := prompt.(type) {
 		case LinePrompter:
-			_, err = p.parseLine(lp)
+			var input string
+			input, err = p.parseLine(lp)
+			inputs = append(inputs, input)
 		case MultilinePrompter:
-			_, err = p.parseMultipleLine(lp)
+			inputs, err = p.parseMultipleLine(lp)
+
 		}
 
 		if err != nil {
 			p.renderError(prompt, err)
 		}
+
+		p.scenario = append(
+			p.scenario,
+			Step{
+				prompt.GetPromptString(),
+				inputs,
+				err,
+			},
+		)
 
 		if p.currentPrompt == nil {
 			return
