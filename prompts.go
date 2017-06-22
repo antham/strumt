@@ -32,12 +32,17 @@ type Prompts struct {
 
 func (p *Prompts) renderPrompt(prompt Prompter) {
 	switch pr := prompt.(type) {
+	case PromptRenderer:
+		pr.PrintPrompt(prompt.GetPromptString())
 	default:
 		fmt.Fprintf(p.writer, "%s : \n", prompt.GetPromptString())
 	}
 }
+
 func (p *Prompts) renderError(prompt Prompter, err error) {
 	switch pr := prompt.(type) {
+	case ErrorRenderer:
+		pr.PrintError(err)
 	default:
 		fmt.Fprintf(p.writer, "%s\n", err.Error())
 	}

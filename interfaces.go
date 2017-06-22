@@ -27,3 +27,16 @@ type MultilinePrompter interface {
 	GetNextOnSuccess([]string) string
 	Parse([]string) error
 }
+
+// PromptRenderer can be implemented to customize
+// the way prompt is rendered, prompt string given by
+// GetPromptString is given as parameter
+type PromptRenderer interface {
+	PrintPrompt(string)
+}
+
+// ErrorRenderer can be implemented to customize
+// the way an error return by Parse is rendered
+type ErrorRenderer interface {
+	PrintError(err error)
+}
