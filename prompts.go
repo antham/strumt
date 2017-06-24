@@ -109,9 +109,6 @@ func (p *Prompts) Run() {
 	p.scenario = []Step{}
 
 	for {
-		var err error
-		inputs := []string{}
-
 		prompt := p.currentPrompt
 		renderPrompt(p.writer, prompt)
 
