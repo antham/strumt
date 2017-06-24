@@ -342,10 +342,10 @@ func TestPromptsGetScenario(t *testing.T) {
 	actualScenario := p.GetScenario()
 
 	for i, step := range expectedScenario {
-		assert.Equal(t, step.prompt, actualScenario[i].prompt)
-		assert.Equal(t, step.inputs, actualScenario[i].inputs)
+		assert.Equal(t, step.GetPromptString(), actualScenario[i].prompt)
+		assert.Equal(t, step.GetInputs(), actualScenario[i].inputs)
 
-		if step.err != nil {
+		if step.GetError() != nil {
 			assert.EqualError(t, actualScenario[i].err, step.err.Error())
 		} else {
 			assert.NoError(t, actualScenario[i].err)

@@ -20,6 +20,23 @@ type Step struct {
 	err    error
 }
 
+// GetPromptString returns prompt string displayed by
+// the prompt string
+func (s Step) GetPromptString() string {
+	return s.prompt
+}
+
+// GetInputs retrieves all inputs given by user,
+func (s Step) GetInputs() []string {
+	return s.inputs
+}
+
+// GetError returns the error, if any,
+// triggered on a prompt error
+func (s Step) GetError() error {
+	return s.err
+}
+
 // NewPrompts creates a new prompt from stdin
 func NewPrompts() Prompts {
 	return Prompts{reader: bufio.NewReader(os.Stdin), writer: os.Stdout, prompts: map[string]Prompter{}}
