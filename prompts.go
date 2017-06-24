@@ -10,7 +10,10 @@ import (
 	"strings"
 )
 
-// Step represents a scenario step
+// Step represents a scenario step which is
+// the result of on prompt execution. We store
+// the prompt string, inputs that the user has given,
+// and the prompt error if one occured
 type Step struct {
 	prompt string
 	inputs []string
@@ -23,7 +26,7 @@ func NewPrompts() Prompts {
 }
 
 // NewPromptsFromReaderAndWriter creates a new prompt from a given reader and writer
-// , useful for testing purpose for instance by providing a buffer
+// , useful for testing purpose
 func NewPromptsFromReaderAndWriter(reader io.Reader, writer io.Writer) Prompts {
 	return Prompts{reader: bufio.NewReader(reader), writer: writer, prompts: map[string]Prompter{}}
 }
@@ -90,18 +93,18 @@ func (p *Prompts) AddMultilinePrompter(id string, prompt MultilinePrompter) {
 	p.prompts[id] = prompt
 }
 
-// SetFirst defines from which prompt, the prompt sequence has to start
+// SetFirst defines from which prompt the prompt sequence has to start
 func (p *Prompts) SetFirst(id string) {
 	p.currentPrompt = p.prompts[id]
 }
 
 // GetScenario retrieves all steps done during
-// prompt
+// a prompt sequence
 func (p *Prompts) GetScenario() []Step {
 	return p.scenario
 }
 
-// Run executes prompt sequence
+// Run executes a prompt sequence
 func (p *Prompts) Run() {
 	p.scenario = []Step{}
 
