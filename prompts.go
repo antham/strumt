@@ -11,7 +11,7 @@ import (
 )
 
 // Step represents a scenario step which is
-// the result of on prompt execution. We store
+// the result of a prompt execution. We store
 // the prompt string, inputs that the user has given,
 // and the prompt error if one occured
 type Step struct {
@@ -42,8 +42,7 @@ func NewPrompts() Prompts {
 	return Prompts{reader: bufio.NewReader(os.Stdin), writer: os.Stdout, prompts: map[string]Prompter{}}
 }
 
-// NewPromptsFromReaderAndWriter creates a new prompt from a given reader and writer
-// , useful for testing purpose
+// NewPromptsFromReaderAndWriter creates a new prompt from a given reader and writer, useful for testing purpose
 func NewPromptsFromReaderAndWriter(reader io.Reader, writer io.Writer) Prompts {
 	return Prompts{reader: bufio.NewReader(reader), writer: writer, prompts: map[string]Prompter{}}
 }

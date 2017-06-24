@@ -8,7 +8,7 @@ type Prompter interface {
 
 // LinePrompter defines a one line prompter
 // that will ask only for one user input.
-// To mark prompter as ending prompter
+// To mark prompter as the last prompter
 // NextOnSucces must returns an empty string
 type LinePrompter interface {
 	Prompter
@@ -20,7 +20,7 @@ type LinePrompter interface {
 // that will let the possibility to the user to
 // provide several input, result is provided as
 // an input slice.
-// To mark prompter as ending prompter
+// To mark prompter as the last prompter
 // NextOnSucces must returns an empty string
 type MultilinePrompter interface {
 	Prompter
@@ -29,14 +29,13 @@ type MultilinePrompter interface {
 }
 
 // PromptRenderer can be implemented to customize
-// the way prompt is rendered, prompt string given by
-// PromptString is given as parameter
+// the way prompt is rendered, PromptString result is given as parameter
 type PromptRenderer interface {
 	PrintPrompt(string)
 }
 
 // ErrorRenderer can be implemented to customize
-// the way an error return by Parse is rendered
+// the way an error returned by Parse is rendered
 type ErrorRenderer interface {
 	PrintError(err error)
 }
