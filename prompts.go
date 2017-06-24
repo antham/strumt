@@ -173,11 +173,7 @@ func parseMultipleLine(reader *bufio.Reader, prompt MultilinePrompter) ([]string
 		}
 	}
 
-	if err := prompt.Parse(inputs); err != nil {
-		return inputs, err
-	}
-
-	return inputs, nil
+	return inputs, prompt.Parse(inputs)
 }
 
 func parseLine(reader *bufio.Reader, prompt LinePrompter) (string, error) {
@@ -188,11 +184,7 @@ func parseLine(reader *bufio.Reader, prompt LinePrompter) (string, error) {
 		return "", err
 	}
 
-	if err := prompt.Parse(input); err != nil {
-		return input, err
-	}
-
-	return input, nil
+	return input, prompt.Parse(input)
 }
 
 func renderPrompt(writer io.Writer, prompt Prompter) {
