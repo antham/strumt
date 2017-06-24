@@ -11,18 +11,18 @@ Strumt is a library to create prompt chain. It provides multiline prompt, input 
 package main
 
 import (
-	"bufio"
+    "bufio"
     "fmt"
-	"os"
+    "os"
     "strconv"
 
     "github.com/antham/strumt"
 )
 
 func main() {
-	user := User{}
+    user := User{}
 
-	p := strumt.NewPromptsFromReaderAndWriter(bufio.NewReader(os.Stdin), os.Stdout)
+    p := strumt.NewPromptsFromReaderAndWriter(bufio.NewReader(os.Stdin), os.Stdout)
     p.AddLinePrompter("userName", &StringPrompt{&user.FirstName, "Enter your first name", "lastName", "userName"})
     p.AddLinePrompter("lastName", &StringPrompt{&user.LastName, "Enter your last name", "age", "lastName"})
     p.AddLinePrompter("age", &IntPrompt{&user.Age, "Enter your age", "", "age"})
