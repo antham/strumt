@@ -131,7 +131,7 @@ func (p *Prompts) Run() {
 	}
 }
 
-func isMultilineEnd(reader *bufio.Reader) (bool, error) {
+func isMultilineEnd(reader io.ByteScanner) (bool, error) {
 	bn, err := reader.ReadByte()
 
 	if err == io.EOF {
