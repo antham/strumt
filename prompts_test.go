@@ -179,7 +179,7 @@ func TestPromptsRun(t *testing.T) {
 
 	var actualStdout bytes.Buffer
 
-	p := NewPromptsFromReader(bytes.NewBufferString(buf), &actualStdout)
+	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), &actualStdout)
 
 	p.AddLinePrompter("username", &StringPrompt{&actual.Db.Username, "Give a username", "password", "username"})
 	p.AddLinePrompter("password", &StringPrompt{&actual.Db.Password, "Give a password", "port", "password"})
@@ -242,7 +242,7 @@ func (s *StringWithCustomRendererPrompt) PrintError(err error) {
 func TestPromptRunWithCustomRenderer(t *testing.T) {
 	var actualStdout bytes.Buffer
 
-	p := NewPromptsFromReader(bytes.NewBufferString("\ntest\n"), ioutil.Discard)
+	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString("\ntest\n"), ioutil.Discard)
 
 	var value string
 
@@ -259,7 +259,7 @@ func TestPromptRunWithCustomRenderer(t *testing.T) {
 func TestPromptsGetScenario(t *testing.T) {
 	buf := "\nuser\n\npassword\ntest\n10000\n127.0.0.1\ntest\n1.2.3.4\n8.9.10.11\n\n127.0.0.1\n1.2.3.4\n8.9.10.11\n\nlocalhost:127.0.0.1\ntest\nmyIp:1.2.3.4\n\nlocalhost:127.0.0.1\nmyIp:1.2.3.4\n\n"
 
-	p := NewPromptsFromReader(bytes.NewBufferString(buf), ioutil.Discard)
+	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
 
 	p.AddLinePrompter("username", &StringPrompt{new(string), "Give a username", "password", "username"})
 	p.AddLinePrompter("password", &StringPrompt{new(string), "Give a password", "port", "password"})

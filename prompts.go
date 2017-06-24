@@ -22,9 +22,9 @@ func NewPrompts() Prompts {
 	return Prompts{reader: bufio.NewReader(os.Stdin), writer: os.Stdout, prompts: map[string]Prompter{}}
 }
 
-// NewPromptsFromReader creates a new prompt from a given reader and writer
+// NewPromptsFromReaderAndWriter creates a new prompt from a given reader and writer
 // , useful for testing purpose for instance by providing a buffer
-func NewPromptsFromReader(reader io.Reader, writer io.Writer) Prompts {
+func NewPromptsFromReaderAndWriter(reader io.Reader, writer io.Writer) Prompts {
 	return Prompts{reader: bufio.NewReader(reader), writer: writer, prompts: map[string]Prompter{}}
 }
 
