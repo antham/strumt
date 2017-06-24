@@ -140,6 +140,8 @@ func (p *Prompts) Run() {
 			return
 		}
 
+		renderSeparator(p.writer, prompt)
+
 		p.currentPrompt = nextPrompt
 	}
 }
@@ -215,5 +217,14 @@ func renderError(writer io.Writer, prompt Prompter, err error) {
 		pr.PrintError(err)
 	default:
 		fmt.Fprintf(writer, "%s\n", err.Error())
+	}
+}
+
+func renderSeparator(writer io.Writer, prompt Prompter) {
+	switch pr := prompt.(type) {
+	case SeparatorRenderer:
+		pr.PrintSeparator()
+	default:
+		fmt.Fprintf(writer, "\n")
 	}
 }

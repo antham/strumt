@@ -190,11 +190,15 @@ func TestPromptsRun(t *testing.T) {
 	p.SetFirst("username")
 	p.Run()
 
-	expectedStdout := "Give a username : \nEmpty value given\nGive a username : \n" +
-		"Give a password : \nEmpty value given\nGive a password : \n" +
-		"Give a port : \nProvide a numerical value\nGive a port : \n" +
-		"Give some ips : \ntest is not a valid IP\nGive some ips : \n" +
-		"Give some host/ip couples : \nCheck test is a valid couple key:value\n" +
+	expectedStdout := "Give a username : \nEmpty value given\n\n" +
+		"Give a username : \n\n" +
+		"Give a password : \nEmpty value given\n\n" +
+		"Give a password : \n\n" +
+		"Give a port : \nProvide a numerical value\n\n" +
+		"Give a port : \n\n" +
+		"Give some ips : \ntest is not a valid IP\n\n" +
+		"Give some ips : \n\n" +
+		"Give some host/ip couples : \nCheck test is a valid couple key:value\n\n" +
 		"Give some host/ip couples : \n"
 
 	assert.Equal(t, expected, actual)
@@ -239,6 +243,10 @@ func (s *StringWithCustomRendererPrompt) PrintError(err error) {
 	fmt.Fprintf(s.writer, "==> Something went wrong : %s\n", err.Error())
 }
 
+func (s *StringWithCustomRendererPrompt) PrintSeparator() {
+	fmt.Fprintf(s.writer, "\n+++\n")
+}
+
 func TestPromptRunWithCustomRenderer(t *testing.T) {
 	var actualStdout bytes.Buffer
 
@@ -252,7 +260,7 @@ func TestPromptRunWithCustomRenderer(t *testing.T) {
 	p.Run()
 
 	assert.Equal(t, "test", value)
-	assert.Equal(t, "==> Give a value : \n==> Something went wrong : empty value given\n==> Give a value : \n", actualStdout.String())
+	assert.Equal(t, "==> Give a value : \n==> Something went wrong : empty value given\n\n+++\n==> Give a value : \n", actualStdout.String())
 
 }
 

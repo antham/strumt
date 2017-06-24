@@ -39,3 +39,10 @@ type PromptRenderer interface {
 type ErrorRenderer interface {
 	PrintError(err error)
 }
+
+// SeparatorRenderer can be implemented to customize
+// the way a prompt is separated from another, default
+// is to add a new line
+type SeparatorRenderer interface {
+	PrintSeparator()
+}
