@@ -9,6 +9,31 @@ import (
 	"github.com/antham/strumt"
 )
 
+func Example_customizePromptOutput() {
+	var stdout bytes.Buffer
+	buf := "whatever\nyes\n"
+
+	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), &stdout)
+	p.AddLinePrompter("okprompt", &AreYouOkPrompt{})
+	p.SetFirst("okprompt")
+	p.Run()
+
+	for {
+		line, err := stdout.ReadString('\n')
+
+		if err == io.EOF {
+			break
+		}
+
+		fmt.Println(strings.TrimSpace(line))
+	}
+	// Output:
+	// ==> Are you Ok ?
+	// An error occured : You must answer yes or no
+	// ==> Are you Ok ?
+	//
+}
+
 type AreYouOkPrompt struct {
 }
 
@@ -38,29 +63,4 @@ func (a *AreYouOkPrompt) PrintPrompt(prompt string) {
 
 func (a *AreYouOkPrompt) PrintError(err error) {
 	fmt.Printf("An error occured : %s\n", err)
-}
-
-func Example_customizePromptOutput() {
-	var stdout bytes.Buffer
-	buf := "whatever\nyes\n"
-
-	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), &stdout)
-	p.AddLinePrompter("okprompt", &AreYouOkPrompt{})
-	p.SetFirst("okprompt")
-	p.Run()
-
-	for {
-		line, err := stdout.ReadString('\n')
-
-		if err == io.EOF {
-			break
-		}
-
-		fmt.Println(strings.TrimSpace(line))
-	}
-	// Output:
-	// ==> Are you Ok ?
-	// An error occured : You must answer yes or no
-	// ==> Are you Ok ?
-	//
 }

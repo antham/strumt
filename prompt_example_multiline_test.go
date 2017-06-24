@@ -8,6 +8,20 @@ import (
 	"github.com/antham/strumt"
 )
 
+func Example_multilinePrompt() {
+	var datas []string
+	buf := "test1\ntest2\ntest3\ntest4\n\n"
+
+	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
+	p.AddMultilinePrompter("sliceprompt", &SlicePrompt{&datas})
+	p.SetFirst("sliceprompt")
+	p.Run()
+
+	fmt.Println(datas)
+	// Output:
+	// [test1 test2 test3 test4]
+}
+
 type SlicePrompt struct {
 	datas *[]string
 }
@@ -28,18 +42,4 @@ func (s *SlicePrompt) NextOnSuccess(values []string) string {
 
 func (s *SlicePrompt) NextOnError(err error) string {
 	return "sliceprompt"
-}
-
-func Example_multilinePrompt() {
-	var datas []string
-	buf := "test1\ntest2\ntest3\ntest4\n\n"
-
-	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
-	p.AddMultilinePrompter("sliceprompt", &SlicePrompt{&datas})
-	p.SetFirst("sliceprompt")
-	p.Run()
-
-	fmt.Println(datas)
-	// Output:
-	// [test1 test2 test3 test4]
 }
