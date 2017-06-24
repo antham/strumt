@@ -13,7 +13,7 @@ import (
 // Step represents a scenario step which is
 // the result of a prompt execution. We store
 // the prompt string, inputs that the user has given,
-// and the prompt error if one occured
+// and the prompt error if one occurred
 type Step struct {
 	prompt string
 	inputs []string
