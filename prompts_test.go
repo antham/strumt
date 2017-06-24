@@ -32,7 +32,7 @@ type StringPrompt struct {
 	nextPromptOnError string
 }
 
-func (s *StringPrompt) GetPromptString() string {
+func (s *StringPrompt) PromptString() string {
 	return s.prompt
 }
 
@@ -45,11 +45,11 @@ func (s *StringPrompt) Parse(value string) error {
 	return nil
 }
 
-func (s *StringPrompt) GetNextOnSuccess(value string) string {
+func (s *StringPrompt) NextOnSuccess(value string) string {
 	return s.nextPrompt
 }
 
-func (s *StringPrompt) GetNextOnError(err error) string {
+func (s *StringPrompt) NextOnError(err error) string {
 	return s.nextPromptOnError
 }
 
@@ -60,7 +60,7 @@ type IntPrompt struct {
 	nextPromptOnError string
 }
 
-func (s *IntPrompt) GetPromptString() string {
+func (s *IntPrompt) PromptString() string {
 	return s.prompt
 }
 
@@ -76,11 +76,11 @@ func (s *IntPrompt) Parse(value string) error {
 	return nil
 }
 
-func (s *IntPrompt) GetNextOnSuccess(value string) string {
+func (s *IntPrompt) NextOnSuccess(value string) string {
 	return s.nextPrompt
 }
 
-func (s *IntPrompt) GetNextOnError(err error) string {
+func (s *IntPrompt) NextOnError(err error) string {
 	return s.nextPromptOnError
 }
 
@@ -91,7 +91,7 @@ type IpsPrompt struct {
 	nextPromptOnError string
 }
 
-func (s *IpsPrompt) GetPromptString() string {
+func (s *IpsPrompt) PromptString() string {
 	return s.prompt
 }
 
@@ -107,11 +107,11 @@ func (s *IpsPrompt) Parse(values []string) error {
 	return nil
 }
 
-func (s *IpsPrompt) GetNextOnError(err error) string {
+func (s *IpsPrompt) NextOnError(err error) string {
 	return s.nextPromptOnError
 }
 
-func (s *IpsPrompt) GetNextOnSuccess(value []string) string {
+func (s *IpsPrompt) NextOnSuccess(value []string) string {
 	return s.nextPrompt
 }
 
@@ -122,7 +122,7 @@ type MapPrompt struct {
 	nextPromptOnError string
 }
 
-func (m *MapPrompt) GetPromptString() string {
+func (m *MapPrompt) PromptString() string {
 	return m.prompt
 }
 
@@ -140,11 +140,11 @@ func (m *MapPrompt) Parse(values []string) error {
 	return nil
 }
 
-func (m *MapPrompt) GetNextOnError(err error) string {
+func (m *MapPrompt) NextOnError(err error) string {
 	return m.nextPromptOnError
 }
 
-func (m *MapPrompt) GetNextOnSuccess(value []string) string {
+func (m *MapPrompt) NextOnSuccess(value []string) string {
 	return m.nextPrompt
 }
 
@@ -209,7 +209,7 @@ type StringWithCustomRendererPrompt struct {
 	writer            io.Writer
 }
 
-func (s *StringWithCustomRendererPrompt) GetPromptString() string {
+func (s *StringWithCustomRendererPrompt) PromptString() string {
 	return s.prompt
 }
 
@@ -223,11 +223,11 @@ func (s *StringWithCustomRendererPrompt) Parse(value string) error {
 	return nil
 }
 
-func (s *StringWithCustomRendererPrompt) GetNextOnSuccess(value string) string {
+func (s *StringWithCustomRendererPrompt) NextOnSuccess(value string) string {
 	return s.nextPrompt
 }
 
-func (s *StringWithCustomRendererPrompt) GetNextOnError(err error) string {
+func (s *StringWithCustomRendererPrompt) NextOnError(err error) string {
 	return s.nextPromptOnError
 }
 
@@ -256,7 +256,7 @@ func TestPromptRunWithCustomRenderer(t *testing.T) {
 
 }
 
-func TestPromptsGetScenario(t *testing.T) {
+func TestPromptsScenario(t *testing.T) {
 	buf := "\nuser\n\npassword\ntest\n10000\n127.0.0.1\ntest\n1.2.3.4\n8.9.10.11\n\n127.0.0.1\n1.2.3.4\n8.9.10.11\n\nlocalhost:127.0.0.1\ntest\nmyIp:1.2.3.4\n\nlocalhost:127.0.0.1\nmyIp:1.2.3.4\n\n"
 
 	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
@@ -339,13 +339,13 @@ func TestPromptsGetScenario(t *testing.T) {
 		},
 	}
 
-	actualScenario := p.GetScenario()
+	actualScenario := p.Scenario()
 
 	for i, step := range expectedScenario {
-		assert.Equal(t, step.GetPromptString(), actualScenario[i].prompt)
-		assert.Equal(t, step.GetInputs(), actualScenario[i].inputs)
+		assert.Equal(t, step.PromptString(), actualScenario[i].prompt)
+		assert.Equal(t, step.Inputs(), actualScenario[i].inputs)
 
-		if step.GetError() != nil {
+		if step.Error() != nil {
 			assert.EqualError(t, actualScenario[i].err, step.err.Error())
 		} else {
 			assert.NoError(t, actualScenario[i].err)

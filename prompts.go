@@ -20,20 +20,20 @@ type Step struct {
 	err    error
 }
 
-// GetPromptString returns prompt string displayed by
+// PromptString returns prompt string displayed by
 // the prompt string
-func (s Step) GetPromptString() string {
+func (s Step) PromptString() string {
 	return s.prompt
 }
 
-// GetInputs retrieves all inputs given by user,
-func (s Step) GetInputs() []string {
+// Inputs retrieves all inputs given by user,
+func (s Step) Inputs() []string {
 	return s.inputs
 }
 
-// GetError returns the error, if any,
+// Error returns the error, if any,
 // triggered on a prompt error
-func (s Step) GetError() error {
+func (s Step) Error() error {
 	return s.err
 }
 
@@ -69,21 +69,21 @@ func (p *Prompts) parse() ([]string, Prompter, error) {
 
 		input, err = parseLine(p.reader, prompt)
 
-		if prompt.GetNextOnSuccess(input) != "" {
-			nextPrompt = p.prompts[prompt.GetNextOnSuccess(input)]
+		if prompt.NextOnSuccess(input) != "" {
+			nextPrompt = p.prompts[prompt.NextOnSuccess(input)]
 		}
 
 		inputs = append(inputs, input)
 	case MultilinePrompter:
 		inputs, err = parseMultipleLine(p.reader, prompt)
 
-		if prompt.GetNextOnSuccess(inputs) != "" {
-			nextPrompt = p.prompts[prompt.GetNextOnSuccess(inputs)]
+		if prompt.NextOnSuccess(inputs) != "" {
+			nextPrompt = p.prompts[prompt.NextOnSuccess(inputs)]
 		}
 	}
 
 	if err != nil {
-		nextPrompt = p.prompts[p.currentPrompt.GetNextOnError(err)]
+		nextPrompt = p.prompts[p.currentPrompt.NextOnError(err)]
 	}
 
 	return inputs, nextPrompt, err
@@ -115,9 +115,9 @@ func (p *Prompts) SetFirst(id string) {
 	p.currentPrompt = p.prompts[id]
 }
 
-// GetScenario retrieves all steps done during
+// Scenario retrieves all steps done during
 // a prompt sequence
-func (p *Prompts) GetScenario() []Step {
+func (p *Prompts) Scenario() []Step {
 	return p.scenario
 }
 
@@ -135,7 +135,7 @@ func (p *Prompts) Run() {
 			renderError(p.writer, prompt, err)
 		}
 
-		p.appendScenario(prompt.GetPromptString(), inputs, err)
+		p.appendScenario(prompt.PromptString(), inputs, err)
 
 		if nextPrompt == nil {
 			return
@@ -204,9 +204,9 @@ func parseLine(reader *bufio.Reader, prompt LinePrompter) (string, error) {
 func renderPrompt(writer io.Writer, prompt Prompter) {
 	switch pr := prompt.(type) {
 	case PromptRenderer:
-		pr.PrintPrompt(prompt.GetPromptString())
+		pr.PrintPrompt(prompt.PromptString())
 	default:
-		fmt.Fprintf(writer, "%s : \n", prompt.GetPromptString())
+		fmt.Fprintf(writer, "%s : \n", prompt.PromptString())
 	}
 }
 
