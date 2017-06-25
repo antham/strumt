@@ -5,6 +5,10 @@ Strumt is a library to create prompt chain. It provides multiline prompt, input 
 
 ## Example
 
+Checkout godoc to have more examples : [https://godoc.org/github.com/antham/strumt](https://godoc.org/github.com/antham/strumt)
+
+---
+
 [![asciicast](https://asciinema.org/a/126121.png)](https://asciinema.org/a/126121)
 
 ```go
