@@ -29,7 +29,7 @@ func Example_customizePromptOutput() {
 	}
 	// Output:
 	// ==> Are you Ok ?
-	// An error occured : You must answer yes or no
+	// An error occurred : You must answer yes or no
 	// ==> Are you Ok ?
 	//
 }
@@ -66,5 +66,5 @@ func (a *AreYouOkPrompt) PrintPrompt(prompt string) {
 }
 
 func (a *AreYouOkPrompt) PrintError(err error) {
-	fmt.Printf("An error occured : %s\n", err)
+	fmt.Printf("An error occurred : %s\n", err)
 }
