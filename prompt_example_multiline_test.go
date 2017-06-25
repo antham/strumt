@@ -13,7 +13,7 @@ func Example_multilinePrompt() {
 	buf := "test1\ntest2\ntest3\ntest4\n\n"
 
 	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
-	p.AddMultilinePrompter("sliceprompt", &SlicePrompt{&datas})
+	p.AddMultilinePrompter(&SlicePrompt{&datas})
 	p.SetFirst("sliceprompt")
 	p.Run()
 
@@ -24,6 +24,10 @@ func Example_multilinePrompt() {
 
 type SlicePrompt struct {
 	datas *[]string
+}
+
+func (s *SlicePrompt) ID() string {
+	return "sliceprompt"
 }
 
 func (s *SlicePrompt) PromptString() string {

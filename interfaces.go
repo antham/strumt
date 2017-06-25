@@ -1,7 +1,12 @@
 package strumt
 
 // Prompter defines a generic common prompt
+// ID returns a string id identify prompter
+// PromptString returns string to diplay as prompt
+// NextOnError is triggered when an error occured during
+// prompt sequence
 type Prompter interface {
+	ID() string
 	PromptString() string
 	NextOnError(error) string
 }

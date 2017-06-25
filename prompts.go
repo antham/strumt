@@ -100,13 +100,13 @@ func (p *Prompts) appendScenario(promptString string, inputs []string, err error
 }
 
 // AddLinePrompter add a new LinePrompter mapped to a given id
-func (p *Prompts) AddLinePrompter(id string, prompt LinePrompter) {
-	p.prompts[id] = prompt
+func (p *Prompts) AddLinePrompter(prompt LinePrompter) {
+	p.prompts[prompt.ID()] = prompt
 }
 
 // AddMultilinePrompter add a new MultilinePrompter mapped to a given id
-func (p *Prompts) AddMultilinePrompter(id string, prompt MultilinePrompter) {
-	p.prompts[id] = prompt
+func (p *Prompts) AddMultilinePrompter(prompt MultilinePrompter) {
+	p.prompts[prompt.ID()] = prompt
 }
 
 // SetFirst defines from which prompt the prompt sequence has to start

@@ -28,8 +28,13 @@ type Datas struct {
 type StringPrompt struct {
 	valuePtr          *string
 	prompt            string
+	currentID         string
 	nextPrompt        string
 	nextPromptOnError string
+}
+
+func (s *StringPrompt) ID() string {
+	return s.currentID
 }
 
 func (s *StringPrompt) PromptString() string {
@@ -56,8 +61,13 @@ func (s *StringPrompt) NextOnError(err error) string {
 type IntPrompt struct {
 	valuePtr          *int
 	prompt            string
+	currentID         string
 	nextPrompt        string
 	nextPromptOnError string
+}
+
+func (s *IntPrompt) ID() string {
+	return s.currentID
 }
 
 func (s *IntPrompt) PromptString() string {
@@ -87,8 +97,13 @@ func (s *IntPrompt) NextOnError(err error) string {
 type IpsPrompt struct {
 	valuePtr          *[]string
 	prompt            string
+	currentID         string
 	nextPrompt        string
 	nextPromptOnError string
+}
+
+func (s *IpsPrompt) ID() string {
+	return s.currentID
 }
 
 func (s *IpsPrompt) PromptString() string {
@@ -118,8 +133,13 @@ func (s *IpsPrompt) NextOnSuccess(value []string) string {
 type MapPrompt struct {
 	valuePtr          *map[string]string
 	prompt            string
+	currentID         string
 	nextPrompt        string
 	nextPromptOnError string
+}
+
+func (m *MapPrompt) ID() string {
+	return m.currentID
 }
 
 func (m *MapPrompt) PromptString() string {
@@ -181,11 +201,11 @@ func TestPromptsRun(t *testing.T) {
 
 	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), &actualStdout)
 
-	p.AddLinePrompter("username", &StringPrompt{&actual.Db.Username, "Give a username", "password", "username"})
-	p.AddLinePrompter("password", &StringPrompt{&actual.Db.Password, "Give a password", "port", "password"})
-	p.AddLinePrompter("port", &IntPrompt{&actual.Db.Port, "Give a port", "ips", "port"})
-	p.AddMultilinePrompter("ips", &IpsPrompt{&actual.Ips, "Give some ips", "hosts", "ips"})
-	p.AddMultilinePrompter("hosts", &MapPrompt{&actual.Hosts, "Give some host/ip couples", "", "hosts"})
+	p.AddLinePrompter(&StringPrompt{&actual.Db.Username, "Give a username", "username", "password", "username"})
+	p.AddLinePrompter(&StringPrompt{&actual.Db.Password, "Give a password", "password", "port", "password"})
+	p.AddLinePrompter(&IntPrompt{&actual.Db.Port, "Give a port", "port", "ips", "port"})
+	p.AddMultilinePrompter(&IpsPrompt{&actual.Ips, "Give some ips", "ips", "hosts", "ips"})
+	p.AddMultilinePrompter(&MapPrompt{&actual.Hosts, "Give some host/ip couples", "hosts", "", "hosts"})
 
 	p.SetFirst("username")
 	p.Run()
@@ -208,9 +228,14 @@ func TestPromptsRun(t *testing.T) {
 type StringWithCustomRendererPrompt struct {
 	valuePtr          *string
 	prompt            string
+	currentID         string
 	nextPrompt        string
 	nextPromptOnError string
 	writer            io.Writer
+}
+
+func (s *StringWithCustomRendererPrompt) ID() string {
+	return s.currentID
 }
 
 func (s *StringWithCustomRendererPrompt) PromptString() string {
@@ -254,7 +279,7 @@ func TestPromptRunWithCustomRenderer(t *testing.T) {
 
 	var value string
 
-	p.AddLinePrompter("test", &StringWithCustomRendererPrompt{&value, "Give a value", "", "test", &actualStdout})
+	p.AddLinePrompter(&StringWithCustomRendererPrompt{&value, "Give a value", "test", "", "test", &actualStdout})
 
 	p.SetFirst("test")
 	p.Run()
@@ -269,11 +294,11 @@ func TestPromptsScenario(t *testing.T) {
 
 	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
 
-	p.AddLinePrompter("username", &StringPrompt{new(string), "Give a username", "password", "username"})
-	p.AddLinePrompter("password", &StringPrompt{new(string), "Give a password", "port", "password"})
-	p.AddLinePrompter("port", &IntPrompt{new(int), "Give a port", "ips", "port"})
-	p.AddMultilinePrompter("ips", &IpsPrompt{&[]string{}, "Give some ips", "hosts", "ips"})
-	p.AddMultilinePrompter("hosts", &MapPrompt{&map[string]string{}, "Give some host/ip couples", "", "hosts"})
+	p.AddLinePrompter(&StringPrompt{new(string), "Give a username", "username", "password", "username"})
+	p.AddLinePrompter(&StringPrompt{new(string), "Give a password", "password", "port", "password"})
+	p.AddLinePrompter(&IntPrompt{new(int), "Give a port", "port", "ips", "port"})
+	p.AddMultilinePrompter(&IpsPrompt{&[]string{}, "Give some ips", "ips", "hosts", "ips"})
+	p.AddMultilinePrompter(&MapPrompt{&map[string]string{}, "Give some host/ip couples", "hosts", "", "hosts"})
 
 	p.SetFirst("username")
 	p.Run()
