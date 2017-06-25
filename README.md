@@ -23,9 +23,9 @@ func main() {
     user := User{}
 
     p := strumt.NewPromptsFromReaderAndWriter(bufio.NewReader(os.Stdin), os.Stdout)
-    p.AddLinePrompter("userName", &StringPrompt{&user.FirstName, "Enter your first name", "lastName", "userName"})
-    p.AddLinePrompter("lastName", &StringPrompt{&user.LastName, "Enter your last name", "age", "lastName"})
-    p.AddLinePrompter("age", &IntPrompt{&user.Age, "Enter your age", "", "age"})
+    p.AddLinePrompter(&StringPrompt{&user.FirstName, "Enter your first name", "userName", "lastName", "userName"})
+    p.AddLinePrompter(&StringPrompt{&user.LastName, "Enter your last name", "lastName", "age", "lastName"})
+    p.AddLinePrompter(&IntPrompt{&user.Age, "Enter your age", "age", "", "age"})
     p.SetFirst("userName")
     p.Run()
 
@@ -46,8 +46,13 @@ func main() {
 type StringPrompt struct {
     store             *string
     prompt            string
+    currentID         string
     nextPrompt        string
     nextPromptOnError string
+}
+
+func (s *StringPrompt) ID() string {
+	return s.currentID
 }
 
 func (s *StringPrompt) PromptString() string {
@@ -75,8 +80,13 @@ func (s *StringPrompt) NextOnError(err error) string {
 type IntPrompt struct {
     store             *int
     prompt            string
+    currentID         string
     nextPrompt        string
     nextPromptOnError string
+}
+
+func (i *IntPrompt) ID() string {
+	return i.currentID
 }
 
 func (i *IntPrompt) PromptString() string {

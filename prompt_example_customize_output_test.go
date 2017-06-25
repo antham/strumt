@@ -14,7 +14,7 @@ func Example_customizePromptOutput() {
 	buf := "whatever\nyes\n"
 
 	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), &stdout)
-	p.AddLinePrompter("okprompt", &AreYouOkPrompt{})
+	p.AddLinePrompter(&AreYouOkPrompt{})
 	p.SetFirst("okprompt")
 	p.Run()
 
@@ -35,6 +35,10 @@ func Example_customizePromptOutput() {
 }
 
 type AreYouOkPrompt struct {
+}
+
+func (a *AreYouOkPrompt) ID() string {
+	return "okprompt"
 }
 
 func (a *AreYouOkPrompt) PromptString() string {
