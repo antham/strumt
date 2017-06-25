@@ -2,7 +2,7 @@ package strumt
 
 // Prompter defines a generic common prompt.
 //
-// ID returns a string id to identify prompter and handle it.
+// ID returns a string id to identify prompter and to let other prompter call it.
 //
 // PromptString returns a string to be diplayed as prompt.
 //
