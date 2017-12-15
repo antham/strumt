@@ -231,7 +231,6 @@ type StringWithCustomRendererPrompt struct {
 	currentID         string
 	nextPrompt        string
 	nextPromptOnError string
-	writer            io.Writer
 }
 
 func (s *StringWithCustomRendererPrompt) ID() string {
@@ -260,26 +259,26 @@ func (s *StringWithCustomRendererPrompt) NextOnError(err error) string {
 	return s.nextPromptOnError
 }
 
-func (s *StringWithCustomRendererPrompt) PrintPrompt(prompt string) {
-	fmt.Fprintf(s.writer, "==> %s : \n", prompt)
+func (s *StringWithCustomRendererPrompt) PrintPrompt(w io.Writer, prompt string) {
+	fmt.Fprintf(w, "==> %s : \n", prompt)
 }
 
-func (s *StringWithCustomRendererPrompt) PrintError(err error) {
-	fmt.Fprintf(s.writer, "==> Something went wrong : %s\n", err.Error())
+func (s *StringWithCustomRendererPrompt) PrintError(w io.Writer, err error) {
+	fmt.Fprintf(w, "==> Something went wrong : %s\n", err.Error())
 }
 
-func (s *StringWithCustomRendererPrompt) PrintSeparator() {
-	fmt.Fprintf(s.writer, "\n+++\n")
+func (s *StringWithCustomRendererPrompt) PrintSeparator(w io.Writer) {
+	fmt.Fprintf(w, "\n+++\n")
 }
 
 func TestPromptRunWithCustomRenderer(t *testing.T) {
 	var actualStdout bytes.Buffer
 
-	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString("\ntest\n"), ioutil.Discard)
+	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString("\ntest\n"), &actualStdout)
 
 	var value string
 
-	p.AddLinePrompter(&StringWithCustomRendererPrompt{&value, "Give a value", "test", "", "test", &actualStdout})
+	p.AddLinePrompter(&StringWithCustomRendererPrompt{&value, "Give a value", "test", "", "test"})
 
 	p.SetFirst("test")
 	p.Run()

@@ -205,7 +205,7 @@ func parseLine(reader *bufio.Reader, prompt LinePrompter) (string, error) {
 func renderPrompt(writer io.Writer, prompt Prompter) {
 	switch pr := prompt.(type) {
 	case PromptRenderer:
-		pr.PrintPrompt(prompt.PromptString())
+		pr.PrintPrompt(writer, prompt.PromptString())
 	default:
 		fmt.Fprintf(writer, "%s\n", prompt.PromptString())
 	}
@@ -214,7 +214,7 @@ func renderPrompt(writer io.Writer, prompt Prompter) {
 func renderError(writer io.Writer, prompt Prompter, err error) {
 	switch pr := prompt.(type) {
 	case ErrorRenderer:
-		pr.PrintError(err)
+		pr.PrintError(writer, err)
 	default:
 		fmt.Fprintf(writer, "%s\n", err.Error())
 	}
@@ -223,7 +223,7 @@ func renderError(writer io.Writer, prompt Prompter, err error) {
 func renderSeparator(writer io.Writer, prompt Prompter) {
 	switch pr := prompt.(type) {
 	case SeparatorRenderer:
-		pr.PrintSeparator()
+		pr.PrintSeparator(writer)
 	default:
 		fmt.Fprintf(writer, "\n")
 	}

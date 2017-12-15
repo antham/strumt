@@ -1,5 +1,9 @@
 package strumt
 
+import (
+	"io"
+)
+
 // Prompter defines a generic common prompt.
 //
 // ID returns a string id to identify prompter and to let other prompter call it.
@@ -45,18 +49,18 @@ type MultilinePrompter interface {
 // PromptRenderer can be implemented to customize
 // the way prompt is rendered, PromptString result is given as parameter
 type PromptRenderer interface {
-	PrintPrompt(string)
+	PrintPrompt(io.Writer, string)
 }
 
 // ErrorRenderer can be implemented to customize
 // the way an error returned by Parse is rendered
 type ErrorRenderer interface {
-	PrintError(err error)
+	PrintError(io.Writer, error)
 }
 
 // SeparatorRenderer can be implemented to customize
 // the way a prompt is separated from another, default
 // is to add a new line
 type SeparatorRenderer interface {
-	PrintSeparator()
+	PrintSeparator(io.Writer)
 }

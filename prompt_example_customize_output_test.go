@@ -61,10 +61,10 @@ func (a *AreYouOkPrompt) NextOnError(err error) string {
 	return "okprompt"
 }
 
-func (a *AreYouOkPrompt) PrintPrompt(prompt string) {
-	fmt.Printf("==> %s\n", prompt)
+func (a *AreYouOkPrompt) PrintPrompt(w io.Writer, prompt string) {
+	fmt.Fprintf(w, "==> %s\n", prompt)
 }
 
-func (a *AreYouOkPrompt) PrintError(err error) {
-	fmt.Printf("An error occurred : %s\n", err)
+func (a *AreYouOkPrompt) PrintError(w io.Writer, err error) {
+	fmt.Fprintf(w, "An error occurred : %s", err)
 }
