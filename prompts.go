@@ -207,7 +207,7 @@ func renderPrompt(writer io.Writer, prompt Prompter) {
 	case PromptRenderer:
 		pr.PrintPrompt(prompt.PromptString())
 	default:
-		fmt.Fprintf(writer, "%s : \n", prompt.PromptString())
+		fmt.Fprintf(writer, "%s\n", prompt.PromptString())
 	}
 }
 

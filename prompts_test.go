@@ -201,11 +201,11 @@ func TestPromptsRun(t *testing.T) {
 
 	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), &actualStdout)
 
-	p.AddLinePrompter(&StringPrompt{&actual.Db.Username, "Give a username", "username", "password", "username"})
-	p.AddLinePrompter(&StringPrompt{&actual.Db.Password, "Give a password", "password", "port", "password"})
-	p.AddLinePrompter(&IntPrompt{&actual.Db.Port, "Give a port", "port", "ips", "port"})
-	p.AddMultilinePrompter(&IpsPrompt{&actual.Ips, "Give some ips", "ips", "hosts", "ips"})
-	p.AddMultilinePrompter(&MapPrompt{&actual.Hosts, "Give some host/ip couples", "hosts", "", "hosts"})
+	p.AddLinePrompter(&StringPrompt{&actual.Db.Username, "Give a username : ", "username", "password", "username"})
+	p.AddLinePrompter(&StringPrompt{&actual.Db.Password, "Give a password : ", "password", "port", "password"})
+	p.AddLinePrompter(&IntPrompt{&actual.Db.Port, "Give a port : ", "port", "ips", "port"})
+	p.AddMultilinePrompter(&IpsPrompt{&actual.Ips, "Give some ips : ", "ips", "hosts", "ips"})
+	p.AddMultilinePrompter(&MapPrompt{&actual.Hosts, "Give some host/ip couples : ", "hosts", "", "hosts"})
 
 	p.SetFirst("username")
 	p.Run()
