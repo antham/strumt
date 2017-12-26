@@ -20,19 +20,17 @@ type Step struct {
 	err    error
 }
 
-// PromptString returns prompt string displayed by
-// the prompt string
+// PromptString returns the prompt string displayed by the prompt
 func (s Step) PromptString() string {
 	return s.prompt
 }
 
-// Inputs retrieves all inputs given by user,
+// Inputs retrieves all inputs given by user
 func (s Step) Inputs() []string {
 	return s.inputs
 }
 
-// Error returns the error, if any,
-// triggered on a prompt error
+// Error returns the error triggered by a prompt
 func (s Step) Error() error {
 	return s.err
 }
@@ -47,8 +45,7 @@ func NewPromptsFromReaderAndWriter(reader io.Reader, writer io.Writer) Prompts {
 	return Prompts{reader: bufio.NewReader(reader), writer: writer, prompts: map[string]Prompter{}}
 }
 
-// Prompts stores all defined prompts and current
-// running prompt
+// Prompts stores all defined prompts and current running prompt
 type Prompts struct {
 	currentPrompt Prompter
 	prompts       map[string]Prompter
@@ -114,8 +111,7 @@ func (p *Prompts) SetFirst(id string) {
 	p.currentPrompt = p.prompts[id]
 }
 
-// Scenario retrieves all steps done during
-// a prompt sequence
+// Scenario retrieves all steps done during a prompt sequence
 func (p *Prompts) Scenario() []Step {
 	return p.scenario
 }
