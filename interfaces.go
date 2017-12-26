@@ -6,14 +6,14 @@ import (
 
 // Prompter defines a generic common prompt.
 //
-// ID returns a string id to identify prompter and to let other prompter call it.
+// ID returns a string ID to identify prompter and to let other prompter call it.
 //
-// PromptString returns a string to be diplayed as prompt.
+// PromptString returns a string to be displayed as prompt.
 //
 // NextOnError is triggered when an error occurred during
-// prompt sequence, it must returns the id of the prompt
+// prompt sequence, it must returns the ID of the prompt
 // to be called when an error occurred, most of the time it would
-// be the id of the current prompt to loop on it
+// be the ID of the current prompt to loop on it
 type Prompter interface {
 	ID() string
 	PromptString() string
@@ -21,11 +21,11 @@ type Prompter interface {
 }
 
 // LinePrompter defines a one line prompter
-// that will ask only for one user input.
+// that will ask only for a single line user input.
 //
-// NextOnSuccess must returns the id of the next prompt
-// to be called. To mark prompter as the last prompter
-// NextOnSucces must returns an empty string
+// NextOnSuccess must returns the ID of the next prompt
+// to be called. To mark prompter as the last prompter,
+// NextOnSuccess must returns an empty string
 type LinePrompter interface {
 	Prompter
 	NextOnSuccess(string) string
@@ -37,9 +37,9 @@ type LinePrompter interface {
 // provide several input, result is provided as
 // an input slice.
 //
-// NextOnSuccess must returns the id of the next prompt
-// to be called. To mark prompter as the last prompter
-// NextOnSucces must returns an empty string
+// NextOnSuccess must returns the ID of the next prompt
+// to be called. To mark prompter as the last prompter,
+// NextOnSuccess must returns an empty string
 type MultilinePrompter interface {
 	Prompter
 	NextOnSuccess([]string) string
@@ -47,7 +47,8 @@ type MultilinePrompter interface {
 }
 
 // PromptRenderer can be implemented to customize
-// the way prompt is rendered, PromptString result is given as parameter
+// the way prompt is rendered, original PromptString is given 
+// as second parameter
 type PromptRenderer interface {
 	PrintPrompt(io.Writer, string)
 }
@@ -59,8 +60,9 @@ type ErrorRenderer interface {
 }
 
 // SeparatorRenderer can be implemented to customize
-// the way a prompt is separated from another, default
-// is to add a new line
+// the way a prompt is separated from another. When 
+// this interface is not implemented, the default behaviour 
+// is to define a new line as separator
 type SeparatorRenderer interface {
 	PrintSeparator(io.Writer)
 }
