@@ -37,7 +37,7 @@ func (s Step) Error() error {
 	return s.err
 }
 
-// NewPrompts creates a new prompt from stdin
+// NewPrompts creates a new prompt from stdin and stdout
 func NewPrompts() Prompts {
 	return Prompts{reader: bufio.NewReader(os.Stdin), writer: os.Stdout, prompts: map[string]Prompter{}}
 }
