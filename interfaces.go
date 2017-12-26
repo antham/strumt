@@ -12,7 +12,7 @@ import (
 //
 // NextOnError is triggered when an error occurred during
 // prompt sequence, it must returns the id of the prompt
-// to be called when an error occured, most of the time it would
+// to be called when an error occurred, most of the time it would
 // be the id of the current prompt to loop on it
 type Prompter interface {
 	ID() string
