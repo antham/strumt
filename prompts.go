@@ -12,7 +12,7 @@ import (
 
 // Step represents a scenario step which is
 // the result of a prompt execution. We store
-// the prompt string, inputs that the user has given,
+// the prompt string displayed on the screen, inputs that the user has given,
 // and the prompt error if one occurred
 type Step struct {
 	prompt string
@@ -20,12 +20,12 @@ type Step struct {
 	err    error
 }
 
-// PromptString returns the prompt string displayed by the prompt
+// PromptString returns the prompt string displayed by the prompt on the screen
 func (s Step) PromptString() string {
 	return s.prompt
 }
 
-// Inputs retrieves all inputs given by user
+// Inputs retrieves all inputs submitted by the user
 func (s Step) Inputs() []string {
 	return s.inputs
 }
@@ -45,7 +45,10 @@ func NewPromptsFromReaderAndWriter(reader io.Reader, writer io.Writer) Prompts {
 	return Prompts{reader: bufio.NewReader(reader), writer: writer, prompts: map[string]Prompter{}}
 }
 
-// Prompts stores all defined prompts and current running prompt
+// Prompts is the main structure that handle all defined prompts
+// and the logic to run and switch form one prompt to another.
+// It keeps a record as well, of all user actions under a scenario
+// entry
 type Prompts struct {
 	currentPrompt Prompter
 	prompts       map[string]Prompter
@@ -96,12 +99,12 @@ func (p *Prompts) appendScenario(promptString string, inputs []string, err error
 	)
 }
 
-// AddLinePrompter add a new LinePrompter mapped to a given id
+// AddLinePrompter adds a new LinePrompter using the internal id as a reference
 func (p *Prompts) AddLinePrompter(prompt LinePrompter) {
 	p.prompts[prompt.ID()] = prompt
 }
 
-// AddMultilinePrompter add a new MultilinePrompter mapped to a given id
+// AddMultilinePrompter adds a new MultilinePrompter using the internal id as a reference
 func (p *Prompts) AddMultilinePrompter(prompt MultilinePrompter) {
 	p.prompts[prompt.ID()] = prompt
 }
