@@ -46,7 +46,7 @@ func NewPromptsFromReaderAndWriter(reader io.Reader, writer io.Writer) Prompts {
 }
 
 // Prompts is the main structure that handle all defined prompts
-// and the logic to run and switch form one prompt to another.
+// and the logic to run and switch from one prompt to another.
 // It keeps a record as well, of all user actions under a scenario
 // entry
 type Prompts struct {
