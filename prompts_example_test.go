@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strconv"
 
-	"github.com/antham/strumt"
+	"github.com/antham/strumt/v2"
 )
 
 func Example() {
