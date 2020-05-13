@@ -4,6 +4,9 @@ compile:
 	git stash -u
 	gox -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
 
+lint:
+	golangci-lint run
+
 fmt:
 	find ! -path "./vendor/*" -name "*.go" -exec gofmt -s -w {} \;
 
@@ -13,7 +16,7 @@ run-tests:
 run-quick-tests:
 	go test -v $(PKGS)
 
-test-all: run-tests
+test-all: lint run-tests
 
 test-package:
 	go test -race -cover -coverprofile=/tmp/strumt github.com/antham/strumt/$(pkg)
