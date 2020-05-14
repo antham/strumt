@@ -2,10 +2,14 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.14
     working_directory: /go/src/github.com/antham/strumt
     steps:
       - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo sh -s -- -b /usr/local/bin v1.27.0
       - run:
           name: Install vendors
           command: |
