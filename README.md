@@ -1,5 +1,4 @@
-Strumt [![CircleCI](https://circleci.com/gh/antham/strumt/tree/master.svg?style=svg)](https://circleci.com/gh/antham/strumt/tree/master) [![codecov](https://codecov.io/gh/antham/strumt/branch/master/graph/badge.svg)](https://codecov.io/gh/antham/strumt) [![Go Report Card](https://goreportcard.com/badge/github.com/antham/strumt)](https://goreportcard.com/report/github.com/antham/strumt) [![GoDoc](https://godoc.org/github.com/antham/strumt?status.svg)](http://godoc.org/github.com/antham/strumt) [![GitHub tag](https://img.shields.io/github/tag/antham/strumt.svg)]()
-=======
+# Strumt [![codecov](https://codecov.io/gh/antham/strumt/branch/master/graph/badge.svg)](https://codecov.io/gh/antham/strumt) [![Go Report Card](https://goreportcard.com/badge/github.com/antham/strumt)](https://goreportcard.com/report/github.com/antham/strumt) [![GoDoc](https://godoc.org/github.com/antham/strumt?status.svg)](http://godoc.org/github.com/antham/strumt) [![GitHub tag](https://img.shields.io/github/tag/antham/strumt.svg)]()
 
 Strumt is a library to create prompt chain. It provides multiline prompt, input validation, retry on error, ability to create typesafe prompt, ability to customize prompt and error display, a recording of prompt session and the ability to easily test your prompt scenario.
 
