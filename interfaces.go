@@ -47,7 +47,7 @@ type MultilinePrompter interface {
 }
 
 // PromptRenderer can be implemented to customize
-// the way prompt is rendered, original PromptString is given 
+// the way prompt is rendered, original PromptString is given
 // as second parameter
 type PromptRenderer interface {
 	PrintPrompt(io.Writer, string)
@@ -60,8 +60,8 @@ type ErrorRenderer interface {
 }
 
 // SeparatorRenderer can be implemented to customize
-// the way a prompt is separated from another. When 
-// this interface is not implemented, the default behaviour 
+// the way a prompt is separated from another. When
+// this interface is not implemented, the default behaviour
 // is to define a new line as separator
 type SeparatorRenderer interface {
 	PrintSeparator(io.Writer)
