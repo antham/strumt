@@ -3,7 +3,7 @@ package strumt_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"github.com/antham/strumt/v2"
 )
@@ -12,7 +12,7 @@ func Example_multilinePrompt() {
 	var datas []string
 	buf := "test1\ntest2\ntest3\ntest4\n\n"
 
-	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
+	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), io.Discard)
 	p.AddMultilinePrompter(&SlicePrompt{&datas})
 	p.SetFirst("sliceprompt")
 	p.Run()

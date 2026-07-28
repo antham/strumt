@@ -3,7 +3,7 @@ package strumt_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strconv"
 
 	"github.com/antham/strumt/v2"
@@ -14,7 +14,7 @@ func Example() {
 
 	buf := "\nBrad\n\nBlanton\nwhatever\n0\n31\n"
 
-	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
+	p := strumt.NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), io.Discard)
 	p.AddLinePrompter(&StringPrompt{&user.FirstName, "Enter your first name", "userName", "lastName", "userName"})
 	p.AddLinePrompter(&StringPrompt{&user.LastName, "Enter your last name", "lastName", "age", "lastName"})
 	p.AddLinePrompter(&IntPrompt{&user.Age, "Enter your age", "age", "", "age"})
