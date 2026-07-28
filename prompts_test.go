@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"os"
 	"strconv"
@@ -291,7 +290,7 @@ func TestPromptRunWithCustomRenderer(t *testing.T) {
 func TestPromptsScenario(t *testing.T) {
 	buf := "\nuser\n\npassword\ntest\n10000\n127.0.0.1\ntest\n1.2.3.4\n8.9.10.11\n\n127.0.0.1\n1.2.3.4\n8.9.10.11\n\nlocalhost:127.0.0.1\ntest\nmyIp:1.2.3.4\n\nlocalhost:127.0.0.1\nmyIp:1.2.3.4\n\n"
 
-	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), ioutil.Discard)
+	p := NewPromptsFromReaderAndWriter(bytes.NewBufferString(buf), io.Discard)
 
 	p.AddLinePrompter(&StringPrompt{new(string), "Give a username", "username", "password", "username"})
 	p.AddLinePrompter(&StringPrompt{new(string), "Give a password", "password", "port", "password"})
